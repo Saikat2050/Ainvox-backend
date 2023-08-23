@@ -1,18 +1,24 @@
 {
   "name": "auth-module",
   "version": "1.0.0",
-  "main": "src/index.ts",
+  "main": "dist/server.js",
   "author": "Saikat2050",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon src/index.ts"
+    "dev": "nodemon src/server.ts",
+    "build": "tsc -p tsconfig.json",
+    "serve": "node dist/server.js"
   },
-  "engines" : { 
-    "node" : ">=18.0.0"
+  "devDependencies": {
+    "@types/node": "^18.16.9",
+    "nodemon": "^3.0.1",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.1.6"
+  },
+  "engines": {
+    "node": ">=18"
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "nodemon": "^3.0.1",
-    "typescript": "^5.1.6"
+    "express": "^4.18.2"
   }
 }
