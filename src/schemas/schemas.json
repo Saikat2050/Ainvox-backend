@@ -1,0 +1,32 @@
+[
+  {
+    "source": "types/Auth.ts",
+    "basePath": "/v1/auth",
+    "schemas": [
+      {
+        "apiPath": "/v1/auth/sign-in",
+        "method": "POST",
+        "source": "types/Auth.ts",
+        "schema": "SignInPayload"
+      },
+      {
+        "apiPath": "/v1/auth/send-otp",
+        "method": "POST",
+        "source": "types/Auth.ts",
+        "schema": "SendOtpPayload"
+      },
+      {
+        "apiPath": "/v1/auth/verify-otp",
+        "method": "POST",
+        "source": "types/Auth.ts",
+        "schema": "VerifyOtpPayload"
+      },
+      {
+        "apiPath": "/v1/auth/reset-password",
+        "method": "POST",
+        "source": "types/Auth.ts",
+        "schema": "ResetPasswordPayload"
+      }
+    ]
+  }
+]

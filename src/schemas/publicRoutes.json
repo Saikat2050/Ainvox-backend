@@ -1,0 +1,42 @@
+[
+    {
+		"apiPath": "/v1/auth/refresh-token",
+		"method": "POST"
+	},
+	{
+		"apiPath": "/v1/auth/sign-in",
+		"method": "POST"
+	},
+	{
+		"apiPath": "/v1/auth/verify-otp",
+		"method": "POST"
+	},
+	{
+		"apiPath": "/v1/auth/send-otp",
+		"method": "POST"
+	},
+	{
+		"apiPath": "/v1/auth/reset-password",
+		"method": "POST"
+	},
+	{
+		"apiPath": "/v1/auth/client-register",
+		"method": "POST"
+	},
+	{
+		"apiPath": "/v1/client-prompt-action/call-action",
+		"method": "POST"
+	},
+	{
+		"apiPath": "/v1/chat/save-rating",
+		"method": "POST"
+	},
+	{
+		"apiPath": "/v1/chat/send-chat-data",
+		"method": "POST"
+	},
+	{
+		"apiPath": "/v1/conversations/create",
+		"method": "POST"
+	}
+]
