@@ -1,6 +1,6 @@
 import express, {Router} from "express"
 
-import AuthController from "../controllers/AuthController"
+// import AuthController from "../controllers/AuthController"
 
 //routes
 export class AuthRouter {
@@ -8,11 +8,11 @@ export class AuthRouter {
 	constructor() {
 		this.router = express.Router()
 		this.router
-			.post("/sign-up", AuthController.register)
-			.post("/send-otp", AuthController.sendOtpWithHash)
-			.post("/verify-otp", AuthController.verifyingByHashOtp)
-			.post("/update-user", AuthController.resetPassword)
-			.post("/sign-in", AuthController.signIn)
-			.post("/refresh-token", AuthController.refreshToken)
+			// .post("/sign-up", AuthController.register)
+			// .post("/send-otp", AuthController.sendOtpWithHash)
+			// .post("/verify-otp", AuthController.verifyingByHashOtp)
+			// .post("/update-user", AuthController.resetPassword)
+			// .post("/sign-in", AuthController.signIn)
+			// .post("/refresh-token", AuthController.refreshToken)
 	}
 }

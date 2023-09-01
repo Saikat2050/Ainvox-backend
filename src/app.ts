@@ -16,7 +16,6 @@ import routes from "./routes/MainRouter"
 
 /* Middlewares */
 import ApiMiddlewares from "./middleware/ApiMiddlewares"
-import {migrator} from "./lib/migrator"
 import Validator from "./middleware/Validator"
 import {generateSchema} from "./lib/schemaGenerator"
 
@@ -116,10 +115,7 @@ app.use(ApiMiddlewares.exceptionHandler)
 // server
 app.listen(PORT, () => {
 	console.log(`Auth API is up and running on ${PORT}`)
-
-	// migrations
-	migrator()
-
+	
 	// generate schema
-	generateSchema()
+	// generateSchema()
 })
