@@ -1,8 +1,6 @@
 import express from "express"
 
-import {
-	AuthRouter
-} from "."
+import {AuthRouter} from "."
 
 const router = express.Router()
 

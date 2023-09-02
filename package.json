@@ -4,16 +4,33 @@
   "main": "dist/app.js",
   "author": "Saikat2050",
   "license": "MIT",
+  "private": false,
   "scripts": {
+    "postinstall": "husky install",
+    "prepack": "pinst --disable",
+    "postpack": "pinst --enable",
+    "start": "nodemon app.ts",
     "dev": "rimraf dist && yarn build && nodemon --watch dist --delay 1 dist/app.js",
     "build": "tsc -p tsconfig.json",
-    "serve": "node dist/app.js"
+    "serve": "node dist/app.js",
+    "test": "mocha --require ts-node/register src/test/**/*test.ts",
+    "prettier:check": "prettier \"{src,test}/**/*.{ts,js}\" --list-different",
+    "prettier:fix": "prettier \"{src,test}/**/*.{ts,js}\" --write",
+    "lint:check": "eslint .",
+    "lint:fix": "eslint --fix ."
   },
   "devDependencies": {
     "@types/node": "^18.16.9",
+    "@typescript-eslint/eslint-plugin": "^6.5.0",
+    "@typescript-eslint/parser": "^6.5.0",
     "nodemon": "^3.0.1",
     "ts-node": "^10.9.1",
     "typescript": "^5.1.6"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn prettier:fix"
+    }
   },
   "engines": {
     "node": ">=18"
@@ -33,9 +50,12 @@
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "ejs": "^3.1.9",
+    "eslint": "^8.48.0",
+    "eslint-config-prettier": "^9.0.0",
     "espress": "^0.0.0",
     "express": "^4.18.2",
     "helmet": "^7.0.0",
+    "husky": "^8.0.3",
     "jsonwebtoken": "^9.0.1",
     "moment": "^2.29.4",
     "mongoose": "^7.5.0",
@@ -44,6 +64,7 @@
     "morgan": "^1.10.0",
     "node-cron": "^3.0.2",
     "nodemailer": "^6.9.4",
+    "prettier": "^3.0.3",
     "rimraf": "^5.0.1",
     "rotating-file-stream": "^3.1.1",
     "typescript-json-schema": "^0.60.0"

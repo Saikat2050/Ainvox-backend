@@ -115,7 +115,7 @@ app.use(ApiMiddlewares.exceptionHandler)
 // server
 app.listen(PORT, () => {
 	console.log(`Auth API is up and running on ${PORT}`)
-	
+
 	// generate schema
 	// generateSchema()
 })

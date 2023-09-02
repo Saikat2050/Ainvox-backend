@@ -79,7 +79,7 @@ export async function generateSchema() {
 		console.log(`ended schemaPath`, schemaPath)
 	}
 
-	let schemaDirectory = join(__dirname, "../schema/cache.json")
+	const schemaDirectory = join(__dirname, "../schema/cache.json")
 	fs.existsSync(schemaDirectory) ||
 		fs.mkdirSync(schemaDirectory, {recursive: true})
 	const content = JSON.stringify(schemaArr, null, 2)
