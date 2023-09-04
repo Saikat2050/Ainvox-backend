@@ -8,11 +8,15 @@ export class AuthRouter {
 	constructor() {
 		this.router = express.Router()
 		this.router
-		// .post("/sign-up", AuthController.register)
-		// .post("/send-otp", AuthController.sendOtpWithHash)
-		// .post("/verify-otp", AuthController.verifyingByHashOtp)
-		// .post("/update-user", AuthController.resetPassword)
-		// .post("/sign-in", AuthController.signIn)
-		// .post("/refresh-token", AuthController.refreshToken)
+		// .post("/register", AuthController)
+		// .post("/send-otp", AuthController)
+		// .post("/verify-otp/:id", AuthController)
+		// .post("/update-user", AuthController)
+		// .post("/sign-in", AuthController)
+		// .post("/refresh-token", AuthController)
+		// .post("/sign-out", AuthController)
+		// .post("/reset-password/:id", AuthController)
+		// .post("/list-user", AuthController)
+		// .post("/delete-user", AuthController)
 	}
 }

@@ -1,4 +1,4 @@
-import {Manipulator, Timestamp} from "./common"
+import {OrderDir, Range} from "./common"
 
 export enum Role {
 	SUPER_ADMIN = 1,
@@ -6,31 +6,70 @@ export enum Role {
 	CLIENT = 3
 }
 
-export type CredentialDetails = {
-	credentialId: number
-	userId: number
-	userName: string
-	password: string
-	status: boolean
-}
-
-export type CreateCredentialPayload = {
-	userId: number
-	userName: string
-	password: string
-}
-
 export type SignInPayload = {
-	userName: string
+	email: string
+	roleId: number
 	password: string
 }
 
-export type VerifyOtpPayload = {
-	userName?: string
-	hash?: string
-	otp: number
+export type RegisterPayload = {
+	name: string
+	email: string
+	roleId: number
+	mobile?: string
+	password: string
+	dob?: string
+	address?: string
+	city?: string
+	state?: string
+	country?: string
+	postalCode?: string
+}
+
+export type SignOutPayload = {
+	userId: string
+}
+
+export type UpdateUserPayload = {
+	userId: string
+	name?: string
+	email?: string
+	mobile?: string
+	dob?: string
+	address?: string
+	city?: string
+	state?: string
+	country?: string
+	postalCode?: string
 }
 
 export type SendOtpPayload = {
-	userName: string
+	email: string
+}
+
+export type VerifyOtpPayload = {
+	value: string
+}
+
+export type ResetPasswordPayload = {
+	value: string
+	password: string
+}
+
+type FilterPayload = {
+	userId?: string
+	search?: string
+}
+
+export type ListUserPayload = {
+	filter?: FilterPayload
+	range?: Range
+	sort?: {
+		orderBy?: "userId"
+		orderDir?: OrderDir
+	}
+}
+
+export type DeleteUserPayload = {
+	userId: string
 }

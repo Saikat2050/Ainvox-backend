@@ -13,8 +13,8 @@ eventEmitter.on("logging", (msg: any) => {
 
 	const data: string = `
         CUSTOM LOGGING ${
-					typeof msg !== "string" ? JSON.stringify(msg) : msg
-				}    
+			typeof msg !== "string" ? JSON.stringify(msg) : msg
+		}    
     `
 	fs.appendFile(
 		path.resolve(customLogs, `log_${moment().format("YYYY-MM-DD")}.log`),

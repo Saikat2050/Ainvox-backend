@@ -1,4 +1,5 @@
 require("dotenv").config()
+import mongoose from "mongoose"
 import express, {Application, Request, Response, NextFunction} from "express"
 import cors from "cors"
 import path from "path"
@@ -29,7 +30,9 @@ if (
 	!process.env.ENVIRONMENT ||
 	!SUPPORTED_ENVS.includes(process.env.ENVIRONMENT)
 ) {
-	const supported = SUPPORTED_ENVS.map((env) => JSON.stringify(env)).join(", ")
+	const supported = SUPPORTED_ENVS.map((env) => JSON.stringify(env)).join(
+		", "
+	)
 
 	console.log(
 		`ENVIRONMENT=${process.env.ENVIRONMENT} is not supported. Supported values: ${supported}`
@@ -113,7 +116,18 @@ app.use("*", ApiMiddlewares.middleware404)
 app.use(ApiMiddlewares.exceptionHandler)
 
 // server
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
+	// Connect to mongoDB
+	const mongoDB: string =
+		process.env.MONGODB_URI || "mongodb://localhost:27017/<database>"
+	try {
+		mongoose.Promise = global.Promise
+		await mongoose.connect(mongoDB)
+	} catch (err) {
+		console.error(err)
+		process.exit()
+	}
+
 	console.log(`Auth API is up and running on ${PORT}`)
 
 	// generate schema

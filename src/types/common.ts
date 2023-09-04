@@ -16,17 +16,10 @@ export type Timestamp = {
 	deletedAt: string
 }
 
-export type Manipulator = {
-	createdBy: string
-	updatedBy: string
-	deletedBy: string
-}
-
 export type Error = {
 	message: string
 	status?: number
 	code?: string
-	stack?: string
 }
 
 export type Headers = any & {

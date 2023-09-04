@@ -1,0 +1,10 @@
+{
+    "NOT_FOUND": {
+        "statusCode": 400,
+        "errorCode": "not_found"
+    },
+    "BAD_REQUEST": {
+        "statusCode": 400,
+        "errorCode": "bad_request"
+    }
+}

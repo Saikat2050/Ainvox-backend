@@ -20,7 +20,8 @@ class Validator {
 		res: Response,
 		next: NextFunction
 	) {
-		// const reqUrl: string = req.url
+		// let reqUrl: string = req.url
+		// reqUrl = reqUrl.replace(/\d+/g, ':id')
 		// const typeModule: string[] = reqUrl.split("/")
 		// typeModule.pop()
 		// const schemaModulePath = Object.keys(schemas).find(
@@ -48,7 +49,11 @@ class Validator {
 		next()
 	}
 
-	public async validateToken(req: Request, res: Response, next: NextFunction) {
+	public async validateToken(
+		req: Request,
+		res: Response,
+		next: NextFunction
+	) {
 		try {
 			// const reqUrl: string = req.url
 			// const reqMethod: string = req.method
@@ -96,10 +101,10 @@ class Validator {
 			// req.headers.roleId = userExist[0].roleId
 
 			next()
-		} catch (err) {
-			return res.status(400).json({
+		} catch (err: any) {
+			return res.status(401).json({
 				errorCode: `invalid_token`,
-				message: `Please check credentials and try again`
+				message: err.message
 			})
 		}
 	}

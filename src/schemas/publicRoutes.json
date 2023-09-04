@@ -20,23 +20,7 @@
 		"method": "POST"
 	},
 	{
-		"apiPath": "/v1/auth/client-register",
-		"method": "POST"
-	},
-	{
-		"apiPath": "/v1/client-prompt-action/call-action",
-		"method": "POST"
-	},
-	{
-		"apiPath": "/v1/chat/save-rating",
-		"method": "POST"
-	},
-	{
-		"apiPath": "/v1/chat/send-chat-data",
-		"method": "POST"
-	},
-	{
-		"apiPath": "/v1/conversations/create",
+		"apiPath": "/v1/auth/register",
 		"method": "POST"
 	}
 ]
