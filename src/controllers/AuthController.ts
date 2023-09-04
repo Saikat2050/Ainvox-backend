@@ -23,7 +23,6 @@ import {ApiResponse} from "../helpers/ApiResponse"
 import errorData from "../constants/errorData.json"
 
 class AuthController {
-
 	constructor() {
 		this.register = this.register.bind(this)
 		this.sendOtp = this.sendOtp.bind(this)
@@ -76,19 +75,18 @@ class AuthController {
 				})
 			}
 
-			const [phoneExists, userExists] =
-				await Promise.all([
-					inputData.mobile
-						? User.findOne({
-								mobile: inputData.mobile,
-								isDeleted: false
-						  })
-						: [],
-					User.findOne({
-						email: inputData.email,
-						isDeleted: false
-					})
-				])
+			const [phoneExists, userExists] = await Promise.all([
+				inputData.mobile
+					? User.findOne({
+							mobile: inputData.mobile,
+							isDeleted: false
+					  })
+					: [],
+				User.findOne({
+					email: inputData.email,
+					isDeleted: false
+				})
+			])
 			if (inputData.mobile && phoneExists) {
 				return Response.errorResponse({
 					...errorData.ALREADY_EXISTS,
@@ -126,25 +124,22 @@ class AuthController {
 		// try {
 		// 	const Response = new ApiResponse(res)
 		// 	const {email}: SendOtpPayload = req.body
-
-			// //check if user exist
-			// const userExists: UserDetails | null =
-			// 	await User.findOne({
-			// 		email,
-			// 		isDeleted: false,
-			// 		isActive: true
-			// 	})
-			// if (!userExists)
-			// {
-			// 	return Response.errorResponse({
-			// 		...errorData.NOT_FOUND,
-			// 		message: "User not found"
-			// 	})
-			// }
-
+		// //check if user exist
+		// const userExists: UserDetails | null =
+		// 	await User.findOne({
+		// 		email,
+		// 		isDeleted: false,
+		// 		isActive: true
+		// 	})
+		// if (!userExists)
+		// {
+		// 	return Response.errorResponse({
+		// 		...errorData.NOT_FOUND,
+		// 		message: "User not found"
+		// 	})
+		// }
 		// 	// generate otp
 		// 	const otp: number = await generateOtp()
-
 		// 	// create encryption
 		// 	const encryptedOtp: string = jwt.sign(
 		// 		{
@@ -152,7 +147,6 @@ class AuthController {
 		// 		},
 		// 		process.env.JWT_SECRET_KEY as string
 		// 	)
-
 		// 	// save encrypted otp
 		// 	const verificationDataExists: VerificationDetails[] =
 		// 		await this.verificationCommonModel.list({value: userName})
@@ -172,7 +166,6 @@ class AuthController {
 		// 			verificationDataExists[0]?.verificationId
 		// 		)
 		// 	}
-
 		// 	// get first name of the user
 		// 	const [userDetails]: UserShortDetails[] =
 		// 		await this.commonModel.list({
@@ -181,7 +174,6 @@ class AuthController {
 		// 	if (!userDetails) {
 		// 		throw new UnauthorizedException("User not found")
 		// 	}
-
 		// 	if (authCredential.logInWith === LogInWith.MOBILE) {
 		// 		// send sms
 		// 		// await sendSMS(authCredential[0].mobile, otp);
@@ -193,7 +185,6 @@ class AuthController {
 		// 			userDetails.firstName
 		// 		)
 		// 	}
-
 		// 	return res.json({
 		// 		success: true,
 		// 		message: `OTP sent successfully`
@@ -213,7 +204,6 @@ class AuthController {
 		// 	const {hash, otp}: {hash: string; otp: number} = req.body
 		// 	const decryptData: DecryptData = await decryptBycrypto(hash)
 		// 	const {email, userId}: DecryptData = decryptData
-
 		// 	// check if otp is valid
 		// 	const [verificationData]: VerificationTableData[] =
 		// 		await this.verificationCommonModel.list({
@@ -226,7 +216,6 @@ class AuthController {
 		// 	if (!verificationData) {
 		// 		throw new UnauthorizedException("User not found")
 		// 	}
-
 		// 	let decoded: any = null
 		// 	try {
 		// 		decoded = jwt.verify(
@@ -256,13 +245,11 @@ class AuthController {
 		// 			"OTP expired. Please resend and try again."
 		// 		)
 		// 	}
-
 		// 	// mark OTP as used
 		// 	await this.verificationCommonModel.update(
 		// 		{isVerified: true},
 		// 		verificationData.verificationId
 		// 	)
-
 		// 	return res.json({
 		// 		success: true,
 		// 		message: `OTP verified successfully`
@@ -284,7 +271,6 @@ class AuthController {
 	) {
 		// try {
 		// 	let {hash, otp, password}: ResetPasswordPayload = req.body
-
 		// 	// encrypt password
 		// 	const isValidPassword: boolean =
 		// 		await helper.regexPassword(password)
@@ -298,10 +284,8 @@ class AuthController {
 		// 		password,
 		// 		parseInt(process.env.SALT_ROUNDS as string)
 		// 	)
-
 		// 	const decryptData: DecryptData = await decryptBycrypto(hash)
 		// 	const {email, userId} = decryptData
-
 		// 	// check if user & verification exist
 		// 	const [[authCredential], [verificationData]]: [
 		// 		CredentialDetails[],
@@ -309,7 +293,6 @@ class AuthController {
 		// 	] = await Promise.all([
 		// 		// authCredential
 		// 		this.authCredentialModel.list({userName: email}),
-
 		// 		// verification
 		// 		this.verificationCommonModel.list({
 		// 			value: email,
@@ -327,7 +310,6 @@ class AuthController {
 		// 			"Invalid OTP. Please resend and try again."
 		// 		)
 		// 	}
-
 		// 	// check if otp is valid
 		// 	let decoded: any = null
 		// 	try {
@@ -358,21 +340,18 @@ class AuthController {
 		// 			"OTP expired. Please resend and try again."
 		// 		)
 		// 	}
-
 		// 	await Promise.all([
 		// 		// update otp
 		// 		this.verificationCommonModel.update(
 		// 			{isVerified: true},
 		// 			verificationData.verificationId
 		// 		),
-
 		// 		// update password
 		// 		this.authCredentialModel.update(
 		// 			{password},
 		// 			authCredential.credentialId
 		// 		)
 		// 	])
-
 		// 	return res.json({
 		// 		success: true,
 		// 		message: `Password updated successfully`
@@ -392,15 +371,13 @@ class AuthController {
 			const Response = new ApiResponse(res)
 			const inputData: SignInPayload = req.body
 
-				//check if user exist
-				const userExists =
-				await User.findOne({
-					email: inputData.email,
-					isDeleted: false,
-					isActive: true
-				})
-			if (!userExists)
-			{
+			//check if user exist
+			const userExists = await User.findOne({
+				email: inputData.email,
+				isDeleted: false,
+				isActive: true
+			})
+			if (!userExists) {
 				return Response.errorResponse({
 					...errorData.NOT_FOUND,
 					message: "User not found"
