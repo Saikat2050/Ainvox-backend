@@ -6,5 +6,15 @@
     "BAD_REQUEST": {
         "statusCode": 400,
         "errorCode": "bad_request"
+    },
+    "ALREADY_EXISTS": {
+        "statusCode": 400,
+        "errorCode": "already_exists"
+    },
+    "UNAUTHORIZED": {
+        "statusCode": 401
+    },
+    "FORBIDDEN": {
+        "statusCode": 403
     }
 }
