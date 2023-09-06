@@ -33,7 +33,10 @@ export type SignOutPayload = {
 export type UpdateUserPayload = {
 	userId: string
 	name?: string
-	email?: string
+	email?: {
+		email: string
+		password: string
+	}
 	mobile?: string
 	dob?: string
 	address?: string
@@ -48,10 +51,12 @@ export type SendOtpPayload = {
 }
 
 export type VerifyOtpPayload = {
+	email: string
 	value: string
 }
 
 export type ResetPasswordPayload = {
+	email: string
 	value: string
 	password: string
 }

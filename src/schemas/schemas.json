@@ -1,60 +1,60 @@
 [
   {
-    "source": "types/auth.js",
+    "source": "types/auth",
     "basePath": "/v1/auth",
     "schemas": [
       {
         "apiPath": "/v1/auth/register",
         "method": "POST",
-        "source": "types/auth.js",
+        "source": "types/auth",
         "schema": "RegisterPayload"
       },
       {
         "apiPath": "/v1/auth/send-otp",
         "method": "POST",
-        "source": "types/auth.js",
+        "source": "types/auth",
         "schema": "SendOtpPayload"
       },
       {
-        "apiPath": "/v1/auth/verify-otp/:id",
+        "apiPath": "/v1/auth/verify-otp",
         "method": "POST",
-        "source": "types/auth.js",
+        "source": "types/auth",
         "schema": "VerifyOtpPayload"
       },
       {
         "apiPath": "/v1/auth/update-user",
         "method": "POST",
-        "source": "types/auth.js",
+        "source": "types/auth",
         "schema": "UpdateUserPayload"
       },
       {
         "apiPath": "/v1/auth/sign-in",
         "method": "POST",
-        "source": "types/auth.js",
+        "source": "types/auth",
         "schema": "SignInPayload"
       },
       {
         "apiPath": "/v1/auth/sign-out",
         "method": "POST",
-        "source": "types/auth.js",
+        "source": "types/auth",
         "schema": "SignOutPayload"
       },
       {
-        "apiPath": "/v1/auth/reset-password/:id",
+        "apiPath": "/v1/auth/reset-password",
         "method": "POST",
-        "source": "types/auth.js",
+        "source": "types/auth",
         "schema": "ResetPasswordPayload"
       },
       {
         "apiPath": "/v1/auth/list-user",
         "method": "POST",
-        "source": "types/auth.js",
+        "source": "types/auth",
         "schema": "ListUserPayload"
       },
       {
         "apiPath": "/v1/auth/delete-user",
         "method": "POST",
-        "source": "types/auth.js",
+        "source": "types/auth",
         "schema": "DeleteUserPayload"
       }
     ]

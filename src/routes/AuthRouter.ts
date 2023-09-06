@@ -10,12 +10,11 @@ export class AuthRouter {
 		this.router
 			.post("/register", AuthController.register)
 			// .post("/send-otp", AuthController)
-			// .post("/verify-otp/:id", AuthController)
+			// .post("/verify-otp", AuthController)
 			// .post("/update-user", AuthController)
 			.post("/sign-in", AuthController.signIn)
-		// .post("/refresh-token", AuthController)
 		// .post("/sign-out", AuthController)
-		// .post("/reset-password/:id", AuthController)
+		// .post("/reset-password", AuthController)
 		// .post("/list-user", AuthController)
 		// .post("/delete-user", AuthController)
 	}

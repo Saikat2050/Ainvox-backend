@@ -10,6 +10,9 @@ import compression from "compression"
 import moment from "moment"
 import fs from "fs"
 import morgan from "morgan"
+import * as Sentry from "@sentry/node"
+import {ProfilingIntegration} from "@sentry/profiling-node"
+import eventEmitter from "./lib/logging"
 // import * as cron from "node-cron"
 
 /* Routes */
@@ -23,6 +26,24 @@ import {generateSchema} from "./lib/schemaGenerator"
 const PORT: number = parseInt(process.env.PORT as string)
 const app: Application = express()
 
+// Initiate sentry
+Sentry.init({
+	dsn: process.env.SENTRY_DNS as string,
+	integrations: [
+		// enable HTTP calls tracing
+		new Sentry.Integrations.Http({tracing: true}),
+		// enable Express.js middleware tracing
+		new Sentry.Integrations.Express({app}),
+		new ProfilingIntegration()
+	],
+	// Performance Monitoring
+	tracesSampleRate: 1.0, // Capture 100% of the transactions, reduce in production!
+	// Set sampling rate for profiling - this is relative to tracesSampleRate
+	profilesSampleRate: 1.0 // Capture 100% of the transactions, reduce in production!
+})
+
+app.use(Sentry.Handlers.requestHandler())
+
 // Environments
 const SUPPORTED_ENVS = ["development", "staging", "production"]
 
@@ -35,10 +56,13 @@ if (
 	)
 
 	console.log(
-		`ENVIRONMENT=${process.env.ENVIRONMENT} is not supported. Supported values: ${supported}`
+		`ENVIRONMENT = ${process.env.ENVIRONMENT} is not supported. Supported values: ${supported}`
 	)
 	process.exit()
 }
+
+// TracingHandler creates a trace for every incoming request
+app.use(Sentry.Handlers.tracingHandler())
 
 // common logs
 const todayDate = moment().format("YYYY-MM-DD")
@@ -112,6 +136,7 @@ app.use(helmet.xssFilter())
 app.use(Validator.schemaValidation)
 app.use(Validator.validateToken)
 app.use(routes)
+app.use(Sentry.Handlers.errorHandler())
 app.use("*", ApiMiddlewares.middleware404)
 app.use(ApiMiddlewares.exceptionHandler)
 
@@ -128,8 +153,9 @@ app.listen(PORT, async () => {
 		process.exit()
 	}
 
-	console.log(`Auth API is up and running on ${PORT}`)
+	eventEmitter.emit("logging", `Auth API is up and running on ${PORT}`)
+	// console.log(`Auth API is up and running on ${PORT}`)
 
 	// generate schema
-	// generateSchema()
+	generateSchema()
 })

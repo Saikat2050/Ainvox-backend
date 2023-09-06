@@ -3,6 +3,6 @@ version: "2"
 services:
   node:
     build: .
-    container_name: "auth-module"
+    container_name: "auth-ms"
     ports:
       - 8080:8080

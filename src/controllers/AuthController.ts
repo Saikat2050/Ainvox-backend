@@ -18,7 +18,6 @@ import {
 } from "../types/auth"
 import {UserDetails, UserTableData} from "../types/users"
 import helper, {generateOtp, sendSMS, decryptBycrypto} from "../helpers/helper"
-import {BadRequestException, UnauthorizedException} from "../lib/exceptions"
 import {ApiResponse} from "../helpers/ApiResponse"
 import errorData from "../constants/errorData.json"
 
@@ -29,7 +28,6 @@ class AuthController {
 		this.verifyOtp = this.verifyOtp.bind(this)
 		this.resetPassword = this.resetPassword.bind(this)
 		this.signIn = this.signIn.bind(this)
-		this.signOut = this.signOut.bind(this)
 		this.updateUser = this.updateUser.bind(this)
 		this.listUser = this.listUser.bind(this)
 		this.deleteUser = this.deleteUser.bind(this)
@@ -39,7 +37,7 @@ class AuthController {
 	public async register(req: Request, res: Response, next: NextFunction) {
 		try {
 			const Response = new ApiResponse(res)
-			let inputData: RegisterPayload = req.body
+			const inputData: RegisterPayload = req.body
 
 			const [isValidEmail, isValidPhone, isValidPassword]: [
 				boolean,
@@ -113,10 +111,7 @@ class AuthController {
 				data
 			})
 		} catch (error: any) {
-			// @ts-ignore
-			return Response.errorResponse({
-				message: error?.message ?? "Something went wrong"
-			})
+			next(error)
 		}
 	}
 
@@ -390,7 +385,7 @@ class AuthController {
 			)
 			if (!isValidPassword) {
 				return Response.errorResponse({
-					...errorData.UNAUTHORIZED,
+					statusCode: 401,
 					message: "Email or password mismatch"
 				})
 			}
@@ -421,30 +416,27 @@ class AuthController {
 
 			return Response.successResponse({token, data})
 		} catch (error: any) {
-			// @ts-ignore
-			return Response.errorResponse({
-				message: error?.message ?? "Something went wrong"
-			})
+			next(error)
 		}
 	}
 
 	public async refreshToken(req: Request, res: Response, next: NextFunction) {
 		try {
 			let accessToken: string = req.headers.authorization as string
-			if (!accessToken) {
-				throw new BadRequestException(
-					"Missing authorization header",
-					"invalid_token"
-				)
-			}
+			// if (!accessToken) {
+			// 	throw new BadRequestException(
+			// 		"Missing authorization header",
+			// 		"invalid_token"
+			// 	)
+			// }
 
 			// @ts-ignore
 			accessToken = accessToken.split("Bearer").pop().trim()
 
-			let decodedToken = jwt.decode(accessToken)
-			if (!decodedToken) {
-				throw new BadRequestException("Invalid token", "invalid_token")
-			}
+			const decodedToken = jwt.decode(accessToken)
+			// if (!decodedToken) {
+			// 	throw new BadRequestException("Invalid token", "invalid_token")
+			// }
 
 			// @ts-ignore
 			delete decodedToken.iat
@@ -470,18 +462,6 @@ class AuthController {
 				message: `Refresh token generated successfully`,
 				token
 			})
-		} catch (error) {
-			res.status(400).json({
-				status: 400,
-				message: error?.toString(),
-				code: "unexpected_error"
-			})
-			return
-		}
-	}
-
-	public async signOut(req: Request, res: Response, next: NextFunction) {
-		try {
 		} catch (error) {
 			res.status(400).json({
 				status: 400,

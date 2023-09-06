@@ -9,3 +9,6 @@
 
 # logs
 /public/logs/
+
+# lock file
+yarn.lock

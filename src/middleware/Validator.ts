@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken"
 const Ajv = require("ajv")
 
 // import schemas from "../../schema/cache.json"
-// import CommonModel from "../models/CommonModel"
+const schemas = require("../../schema/cache.json")
 import publicApi from "../schemas/publicRoutes.json"
 
 const featureDict = {
@@ -20,32 +20,31 @@ class Validator {
 		res: Response,
 		next: NextFunction
 	) {
-		// let reqUrl: string = req.url
-		// reqUrl = reqUrl.replace(/\d+/g, ':id')
-		// const typeModule: string[] = reqUrl.split("/")
-		// typeModule.pop()
-		// const schemaModulePath = Object.keys(schemas).find(
-		// 	(el) => el === typeModule.join("/")
-		// )
+		let reqUrl: string = req.url
+		const typeModule: string[] = reqUrl.split("/")
+		typeModule.pop()
+		const schemaModulePath = Object.keys(schemas).find(
+			(el) => el === typeModule.join("/")
+		)
 
-		// if (schemaModulePath) {
-		// 	// @ts-ignore
-		// 	const schemaModule = schemas[schemaModulePath]
-		// 	// @ts-ignore
-		// 	const schema = schemaModule["schemas"]
-		// 	const apiSchema = Object.keys(schema).find((el) => el === reqUrl)
-		// 	if (apiSchema) {
-		// 		// @ts-ignore
-		// 		const valid = ajv.validate(schema[apiSchema], req.body)
+		if (schemaModulePath) {
+			// @ts-ignore
+			const schemaModule = schemas[schemaModulePath]
+			// @ts-ignore
+			const schema = schemaModule["schemas"]
+			const apiSchema = Object.keys(schema).find((el) => el === reqUrl)
+			if (apiSchema) {
+				// @ts-ignore
+				const valid = ajv.validate(schema[apiSchema], req.body)
 
-		// 		if (!valid) {
-		// 			return res.status(400).json({
-		// 				errorCode: `invalid_data`,
-		// 				message: ajv.errors[0].message
-		// 			})
-		// 		}
-		// 	}
-		// }
+				if (!valid) {
+					return res.status(400).json({
+						errorCode: `invalid_data`,
+						message: ajv.errors[0].message
+					})
+				}
+			}
+		}
 		next()
 	}
 

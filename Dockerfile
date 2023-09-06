@@ -18,4 +18,7 @@ WORKDIR /application
 
 RUN yarn run build
 
+# generate JSON schemas
+RUN node dist/lib/schemaGenerator.js
+
 CMD ["yarn", "run", "serve"]

@@ -1,24 +1,26 @@
 import {Request, Response, NextFunction} from "express"
 
-import {ServerError} from "../lib/exceptions"
-
 class ApiMiddleware {
 	constructor() {}
 
 	public async exceptionHandler(
-		err: ServerError,
+		err: any,
 		req: Request,
 		res: Response,
 		next: NextFunction
 	) {
-		const result = {
-			message: err.message,
-			status: err?.status ?? 400,
-			code: err?.code ?? "unexpected_error",
-			data: err?.data ?? {}
-		}
+		console.log("Middleware Error Hadnling")
+		const errStatus = err.statusCode || 422
+		const errMsg = err.message || "Something went wrong"
+		const errCode = err.errorCode || "internal_server_error"
 
-		return res.status(result.status).json(result)
+		res.status(errStatus).json({
+			success: false,
+			statusCode: errStatus,
+			message: errMsg,
+			errorCode: errCode,
+			stack: process.env.NODE_ENV === "development" ? err.stack : {}
+		})
 	}
 
 	// optional middle ware
@@ -44,8 +46,8 @@ class ApiMiddleware {
 	) {
 		next({
 			message: `No router for Requested URL ${req.url}`,
-			status: 404,
-			code: `not_found`
+			statusCode: 404,
+			errCode: `not_found`
 		})
 	}
 
