@@ -369,6 +369,7 @@ class AuthController {
 			//check if user exist
 			const userExists = await User.findOne({
 				email: inputData.email,
+				roleId: inputData.roleId,
 				isDeleted: false,
 				isActive: true
 			})
