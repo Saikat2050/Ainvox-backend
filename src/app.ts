@@ -55,9 +55,11 @@ if (
 		", "
 	)
 
-	console.log(
+	eventEmitter.emit(
+		"logging",
 		`ENVIRONMENT = ${process.env.ENVIRONMENT} is not supported. Supported values: ${supported}`
 	)
+
 	process.exit()
 }
 
@@ -154,7 +156,6 @@ app.listen(PORT, async () => {
 	}
 
 	eventEmitter.emit("logging", `Auth API is up and running on ${PORT}`)
-	// console.log(`Auth API is up and running on ${PORT}`)
 
 	// generate schema
 	generateSchema()

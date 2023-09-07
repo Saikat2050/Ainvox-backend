@@ -7,36 +7,36 @@ export class ApiResponse {
 	}
 
 	public async successResponse(data: any) {
-		const statusCode: number = data.statusCode ?? 200
+		data.statusCode = data.statusCode ?? 200
 		data.success = true
 
-		return this.res.status(statusCode).json(data)
+		return this.res.status(data.statusCode).json(data)
 	}
 
 	public async errorResponse(data: any) {
-		const statusCode: number = data.statusCode ?? 422
+		data.statusCode = data.statusCode ?? 422
 		data.success = false
 
-		if (!data.errorCode) {
-			switch (statusCode) {
+		if (!data.code) {
+			switch (data.statusCode) {
 				case 400:
-					data.errorCode = "unexpected_error"
+					data.code = "unexpected_error"
 					break
 				case 401:
-					data.errorCode = "unauthorized"
+					data.code = "unauthorized"
 					break
 				case 403:
-					data.errorCode = "not_enough_permissions"
+					data.code = "not_enough_permissions"
 					break
 				case 404:
-					data.errorCode = "not_found"
+					data.code = "not_found"
 					break
 				default:
-					data.errorCode = "internal_server_error"
+					data.code = "internal_server_error"
 					break
 			}
 		}
 
-		return this.res.status(statusCode).json(data)
+		return this.res.status(data.statusCode).json(data)
 	}
 }

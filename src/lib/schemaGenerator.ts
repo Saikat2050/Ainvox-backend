@@ -4,12 +4,12 @@ import * as TJS from "typescript-json-schema"
 import fs from "fs"
 import path from "path"
 import crypto from "crypto"
+import eventEmitter from "../lib/logging"
 
 export default {
 	generateSchema
 }
 
-const fileType = path.basename(__filename).toString().split(".").pop()
 const cacheBasePath = join(__dirname, "../../schema/cache.json")
 let cacheBasedSchema = {}
 
@@ -34,7 +34,7 @@ export async function generateSchema() {
 
 	for (let i = 0; i < schemas.length; i++) {
 		const schemaPath: string = path.resolve(
-			__dirname + `./../${schemas[i].source}.${fileType}`
+			__dirname + `../../../src/${schemas[i].source}`
 		)
 		const hash: string = await generateCacheBasedSchema(schemaPath)
 
@@ -42,13 +42,16 @@ export async function generateSchema() {
 			cacheBasedSchema[`${schemas[i].basePath}`] &&
 			cacheBasedSchema[`${schemas[i].basePath}`].hash === hash
 		) {
-			console.log(`using hash ${hash} for schemaPath`, schemaPath)
+			eventEmitter.emit(
+				"logging",
+				`using hash ${hash} for schemaPath ${schemaPath}`
+			)
 			schemaArr[`${schemas[i].basePath}`] =
 				cacheBasedSchema[`${schemas[i].basePath}`]
 			continue
 		}
 
-		console.log(`started schemaPath`, schemaPath)
+		eventEmitter.emit("logging", `started schemaPath ${schemaPath}`)
 
 		// optionally pass argument to schema generator
 		const settings: TJS.PartialArgs = {
@@ -111,14 +114,12 @@ export async function generateSchema() {
 				] = schema[pathArr[j]]
 			}
 		}
-		console.log(`ended schemaPath`, schemaPath)
+		eventEmitter.emit("logging", `ended schemaPath ${schemaPath}`)
 	}
 
 	let schemaDirectory = cacheBasePath
 	const content = JSON.stringify(schemaArr, null, 2)
 
 	fs.writeFileSync(schemaDirectory, content)
-	if (process.env.DEBUG === "true") {
-		console.log("Schema generated")
-	}
+	eventEmitter.emit("logging", "Schema generated")
 }

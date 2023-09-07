@@ -247,7 +247,6 @@ const encryptionIV = Crypto.createHash("sha256")
 
 // encrypt by crypto aes 256
 export async function encryptionByCrypto(data: any) {
-	console.log(data)
 	data = typeof data === "object" ? JSON.stringify(data) : data
 	if (
 		!encryptCred.secret_key ||

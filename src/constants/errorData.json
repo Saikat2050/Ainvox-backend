@@ -1,14 +1,14 @@
 {
     "NOT_FOUND": {
         "statusCode": 400,
-        "errorCode": "not_found"
+        "code": "not_found"
     },
     "BAD_REQUEST": {
         "statusCode": 400,
-        "errorCode": "bad_request"
+        "code": "bad_request"
     },
     "ALREADY_EXISTS": {
         "statusCode": 400,
-        "errorCode": "already_exists"
+        "code": "already_exists"
     }
 }
