@@ -1,23 +1,20 @@
-import {Request, Response, NextFunction, response} from "express"
+import {Request, Response, NextFunction} from "express"
 import moment from "moment"
 import bcrypt from "bcrypt"
 import jwt from "jsonwebtoken"
 import User from "../models/users"
 
-import {Headers} from "../types/common"
 import {
 	SignInPayload,
-	RegisterPayload,
-	SignOutPayload,
-	UpdateUserPayload,
+	RegisterPayload,	
 	SendOtpPayload,
 	VerifyOtpPayload,
 	ResetPasswordPayload,
-	ListUserPayload,
-	DeleteUserPayload
+	sendOtpPayload,
+	verifyOtpPayload
 } from "../types/auth"
-import {UserDetails, UserTableData} from "../types/users"
-import helper, {generateOtp, sendSMS, decryptBycrypto} from "../helpers/helper"
+import {UserCreateApiPayload, UserDetails, UserShortDetails} from "../types/users"
+import helper, { decryptBycrypto, encryptionByCrypto} from "../helpers/helper"
 import {ApiResponse} from "../helpers/ApiResponse"
 import errorData from "../constants/errorData.json"
 
@@ -28,15 +25,12 @@ class AuthController {
 		this.verifyOtp = this.verifyOtp.bind(this)
 		this.resetPassword = this.resetPassword.bind(this)
 		this.signIn = this.signIn.bind(this)
-		this.updateUser = this.updateUser.bind(this)
-		this.listUser = this.listUser.bind(this)
-		this.deleteUser = this.deleteUser.bind(this)
 		this.refreshToken = this.refreshToken.bind(this)
 	}
 
 	public async register(req: Request, res: Response, next: NextFunction) {
 		try {
-			const Response = new ApiResponse(res)
+			const response = new ApiResponse(res)
 			const inputData: RegisterPayload = req.body
 
 			const [isValidEmail, isValidPhone, isValidPassword]: [
@@ -55,44 +49,44 @@ class AuthController {
 			])
 
 			if (!isValidEmail) {
-				return Response.errorResponse({
+				return response.errorResponse({
 					...errorData.NOT_FOUND,
 					message: "Email not valid"
 				})
 			}
 			if (inputData.mobile && !isValidPhone) {
-				return Response.errorResponse({
+				return response.errorResponse({
 					...errorData.NOT_FOUND,
 					message: "Phone number not valid"
 				})
 			}
 			if (!isValidPassword) {
-				return Response.errorResponse({
+				return response.errorResponse({
 					...errorData.BAD_REQUEST,
 					message: "Password must be more then 8 char"
 				})
 			}
 
-			const [phoneExists, userExists] = await Promise.all([
+			const [phoneExists, userExists]: [boolean, boolean] = await Promise.all([
 				inputData.mobile
-					? User.findOne({
+					? User.findOne({ //i have checked with mongo find does exist if you don't 
 							mobile: inputData.mobile,
 							isDeleted: false
 					  })
 					: [],
-				User.findOne({
+					User.findOne({
 					email: inputData.email,
 					isDeleted: false
 				})
 			])
-			if (inputData.mobile && phoneExists) {
-				return Response.errorResponse({
+			if (phoneExists && phoneExists) {
+				return response.errorResponse({
 					...errorData.ALREADY_EXISTS,
 					message: "Phone number already exists"
 				})
 			}
 			if (userExists) {
-				return Response.errorResponse({
+				return response.errorResponse({
 					...errorData.ALREADY_EXISTS,
 					message: "User email already exists"
 				})
@@ -104,159 +98,78 @@ class AuthController {
 				parseInt(process.env.SALT_ROUNDS as string)
 			)
 
-			const data = await User.create(inputData)
+			const data: UserCreateApiPayload | null = await User.create(inputData)
 
-			return Response.successResponse({
+			return response.successResponse({
 				message: "User created successfully",
 				data
 			})
-		} catch (error: any) {
+		} catch (error) {
 			next(error)
 		}
 	}
 
 	public async sendOtp(req: Request, res: Response, next: NextFunction) {
-		// try {
-		// 	const Response = new ApiResponse(res)
-		// 	const {email}: SendOtpPayload = req.body
-		// //check if user exist
-		// const userExists: UserDetails | null =
-		// 	await User.findOne({
-		// 		email,
-		// 		isDeleted: false,
-		// 		isActive: true
-		// 	})
-		// if (!userExists)
-		// {
-		// 	return Response.errorResponse({
-		// 		...errorData.NOT_FOUND,
-		// 		message: "User not found"
-		// 	})
-		// }
-		// 	// generate otp
-		// 	const otp: number = await generateOtp()
-		// 	// create encryption
-		// 	const encryptedOtp: string = jwt.sign(
-		// 		{
-		// 			otp
-		// 		},
-		// 		process.env.JWT_SECRET_KEY as string
-		// 	)
-		// 	// save encrypted otp
-		// 	const verificationDataExists: VerificationDetails[] =
-		// 		await this.verificationCommonModel.list({value: userName})
-		// 	if (!verificationDataExists || !verificationDataExists?.length) {
-		// 		await this.verificationCommonModel.bulkCreate([
-		// 			{
-		// 				verificationType: authCredential.logInWith,
-		// 				value: userName,
-		// 				otp: encryptedOtp,
-		// 				isVerified: false,
-		// 				verificationFor: VerificationFor.AUTH
-		// 			}
-		// 		])
-		// 	} else {
-		// 		await this.verificationCommonModel.update(
-		// 			{otp: encryptedOtp},
-		// 			verificationDataExists[0]?.verificationId
-		// 		)
-		// 	}
-		// 	// get first name of the user
-		// 	const [userDetails]: UserShortDetails[] =
-		// 		await this.commonModel.list({
-		// 			userId: authCredential.userId
-		// 		})
-		// 	if (!userDetails) {
-		// 		throw new UnauthorizedException("User not found")
-		// 	}
-		// 	if (authCredential.logInWith === LogInWith.MOBILE) {
-		// 		// send sms
-		// 		// await sendSMS(authCredential[0].mobile, otp);
-		// 	} else if (authCredential.logInWith === LogInWith.EMAIL) {
-		// 		// send otp to email
-		// 		await sendOtpToEmail(
-		// 			authCredential.userName,
-		// 			otp,
-		// 			userDetails.firstName
-		// 		)
-		// 	}
-		// 	return res.json({
-		// 		success: true,
-		// 		message: `OTP sent successfully`
-		// 	})
-		// } catch (error) {
-		// 	res.status(400).json({
-		// 		status: 400,
-		// 		message: error?.toString(),
-		// 		code: "unexpected_error"
-		// 	})
-		// 	return
-		// }
+		try {
+			const response = new ApiResponse(res)
+			const {email}: SendOtpPayload = req.body
+			//check if user exist
+			const userExists: UserDetails | null = await User.findOne({
+				email,
+				isDeleted: false,
+				isActive: true
+			})
+			if (!userExists) {
+				return response.errorResponse({
+					...errorData.NOT_FOUND,
+					message: "User not found"
+				})
+			}
+			const otpRandom: number =  Math.floor(1000 + Math.random() * 9000)
+			await User.updateOne({
+				secrectCode: await decryptBycrypto(otpRandom.toString())
+			})
+
+			// // send otp to email
+			// await sendOtpToEmail(
+			// 	authCredential.userName,
+			// 	otp,
+			// 	userDetails.firstName
+			// )
+
+			return response.successResponse({
+				message: `OTP sent successfully`
+			})
+		} catch (error) {
+			next(error)
+		}
 	}
 
 	public async verifyOtp(req: Request, res: Response, next: NextFunction) {
-		// try {
-		// 	const {hash, otp}: {hash: string; otp: number} = req.body
-		// 	const decryptData: DecryptData = await decryptBycrypto(hash)
-		// 	const {email, userId}: DecryptData = decryptData
-		// 	// check if otp is valid
-		// 	const [verificationData]: VerificationTableData[] =
-		// 		await this.verificationCommonModel.list({
-		// 			value: email,
-		// 			isVerified: false,
-		// 			verificationType: LogInWith.EMAIL,
-		// 			verificationFor: VerificationFor.AUTH,
-		// 			status: true
-		// 		})
-		// 	if (!verificationData) {
-		// 		throw new UnauthorizedException("User not found")
-		// 	}
-		// 	let decoded: any = null
-		// 	try {
-		// 		decoded = jwt.verify(
-		// 			(verificationData?.otp).toString(),
-		// 			process.env.JWT_SECRET_KEY as string
-		// 		)
-		// 	} catch (error) {
-		// 		throw new UnauthorizedException(
-		// 			"Invalid OTP. Please resend and try again."
-		// 		)
-		// 	}
-		// 	if (parseInt(decoded?.otp) !== parseInt(otp.toString())) {
-		// 		throw new UnauthorizedException(
-		// 			"Invalid OTP. Please resend and try again."
-		// 		)
-		// 	}
-		// 	if (
-		// 		new Date(
-		// 			new Date(verificationData.createdAt.toString()).getTime() +
-		// 				parseInt(
-		// 					process.env.OTP_EXPIRATION_IN_MINUTES as string
-		// 				) *
-		// 					60000
-		// 		).getTime() < new Date().getTime()
-		// 	) {
-		// 		throw new UnauthorizedException(
-		// 			"OTP expired. Please resend and try again."
-		// 		)
-		// 	}
-		// 	// mark OTP as used
-		// 	await this.verificationCommonModel.update(
-		// 		{isVerified: true},
-		// 		verificationData.verificationId
-		// 	)
-		// 	return res.json({
-		// 		success: true,
-		// 		message: `OTP verified successfully`
-		// 	})
-		// } catch (error) {
-		// 	res.status(400).json({
-		// 		status: 400,
-		// 		message: error?.toString(),
-		// 		code: "unexpected_error"
-		// 	})
-		// 	return
-		// }
+		try {
+			const response = new ApiResponse(res)
+			const {email, otp}: verifyOtpPayload = req.body
+			
+			// check if otp is valid
+			const userExists: UserDetails | null = await User.findOne({
+				email,
+				secretCode: await encryptionByCrypto(otp),
+				isDeleted: false,
+				isActive: true
+			})
+			if (!userExists) {
+				return response.errorResponse({
+					...errorData.NOT_FOUND,
+					message: "User not found"
+				})
+			}
+			
+			return response.successResponse({
+				message: `OTP verified successfully`
+			})
+		} catch (error) {
+			next(error)
+		}
 	}
 
 	public async resetPassword(
@@ -264,106 +177,72 @@ class AuthController {
 		res: Response,
 		next: NextFunction
 	) {
-		// try {
-		// 	let {hash, otp, password}: ResetPasswordPayload = req.body
-		// 	// encrypt password
-		// 	const isValidPassword: boolean =
-		// 		await helper.regexPassword(password)
-		// 	if (!isValidPassword) {
-		// 		throw new BadRequestException(
-		// 			"Password must be more then 8 char!",
-		// 			"validation_error"
-		// 		)
-		// 	}
-		// 	password = await bcrypt.hash(
-		// 		password,
-		// 		parseInt(process.env.SALT_ROUNDS as string)
-		// 	)
-		// 	const decryptData: DecryptData = await decryptBycrypto(hash)
-		// 	const {email, userId} = decryptData
-		// 	// check if user & verification exist
-		// 	const [[authCredential], [verificationData]]: [
-		// 		CredentialDetails[],
-		// 		VerificationTableData[]
-		// 	] = await Promise.all([
-		// 		// authCredential
-		// 		this.authCredentialModel.list({userName: email}),
-		// 		// verification
-		// 		this.verificationCommonModel.list({
-		// 			value: email,
-		// 			isVerified: false,
-		// 			verificationType: LogInWith.EMAIL,
-		// 			verificationFor: VerificationFor.AUTH,
-		// 			status: true
-		// 		})
-		// 	])
-		// 	if (!authCredential) {
-		// 		throw new UnauthorizedException("User not found")
-		// 	}
-		// 	if (!verificationData) {
-		// 		throw new UnauthorizedException(
-		// 			"Invalid OTP. Please resend and try again."
-		// 		)
-		// 	}
-		// 	// check if otp is valid
-		// 	let decoded: any = null
-		// 	try {
-		// 		decoded = jwt.verify(
-		// 			(verificationData?.otp).toString(),
-		// 			process.env.JWT_SECRET_KEY as string
-		// 		)
-		// 	} catch (error) {
-		// 		throw new UnauthorizedException(
-		// 			"Invalid OTP. Please resend and try again."
-		// 		)
-		// 	}
-		// 	if (parseInt(decoded?.otp) !== parseInt(otp.toString())) {
-		// 		throw new UnauthorizedException(
-		// 			"Invalid OTP. Please resend and try again."
-		// 		)
-		// 	}
-		// 	if (
-		// 		new Date(
-		// 			new Date(verificationData.createdAt.toString()).getTime() +
-		// 				parseInt(
-		// 					process.env.OTP_EXPIRATION_IN_MINUTES as string
-		// 				) *
-		// 					60000
-		// 		).getTime() < new Date().getTime()
-		// 	) {
-		// 		throw new UnauthorizedException(
-		// 			"OTP expired. Please resend and try again."
-		// 		)
-		// 	}
-		// 	await Promise.all([
-		// 		// update otp
-		// 		this.verificationCommonModel.update(
-		// 			{isVerified: true},
-		// 			verificationData.verificationId
-		// 		),
-		// 		// update password
-		// 		this.authCredentialModel.update(
-		// 			{password},
-		// 			authCredential.credentialId
-		// 		)
-		// 	])
-		// 	return res.json({
-		// 		success: true,
-		// 		message: `Password updated successfully`
-		// 	})
-		// } catch (error) {
-		// 	res.status(400).json({
-		// 		status: 400,
-		// 		message: error?.toString(),
-		// 		code: "unexpected_error"
-		// 	})
-		// 	return
-		// }
+		try {
+			const response = new ApiResponse(res)
+			const {email, otp, password}: ResetPasswordPayload = req.body
+			// encrypt password
+			const isValidPassword: boolean =
+				await helper.regexPassword(password)
+			if (!isValidPassword) {
+				return response.errorResponse({
+					...errorData.NOT_FOUND,
+					message: "Password must be more then 8 char"
+				})
+			}
+			const encryptPassword: string = await bcrypt.hash(
+				password,
+				parseInt(process.env.SALT_ROUNDS as string)
+			)
+
+			const listUserData: UserShortDetails | null = await User.findOne({email})
+			if (!listUserData) {
+				return response.errorResponse({
+					...errorData.NOT_FOUND,
+					message: "User not found"
+				})
+			}
+
+			const hashPass: boolean = await bcrypt.compare(otp, encryptPassword)
+			if (!hashPass) {
+				return response.errorResponse({
+					...errorData.NOT_FOUND,
+					message: "User not found"
+				})
+			}
+
+			if (
+				new Date(
+					new Date(listUserData?.createdAt.toString()).getTime() +
+						parseInt(
+							process.env.OTP_EXPIRATION_IN_MINUTES as string
+						) *
+							60000
+				).getTime() < new Date().getTime()
+			) {
+				return response.errorResponse({
+					...errorData.NOT_FOUND,
+					message: "OTP expired. Please resend and try again"
+				})
+			}
+			// check secret key will we receive secret key??
+
+			// update data 
+			await User.findByIdAndUpdate(listUserData.userId, {
+				password: encryptPassword,
+				isVerified:false
+			})
+			
+			return response.successResponse({
+				message: `Password updated successfully`
+			})
+		} catch (error) {
+			next(error)
+		}
 	}
 
 	public async signIn(req: Request, res: Response, next: NextFunction) {
 		try {
-			const Response = new ApiResponse(res)
+			const response = new ApiResponse(res)
 			const inputData: SignInPayload = req.body
 
 			//check if user exist
@@ -374,7 +253,7 @@ class AuthController {
 				isActive: true
 			})
 			if (!userExists) {
-				return Response.errorResponse({
+				return response.errorResponse({
 					...errorData.NOT_FOUND,
 					message: "User not found"
 				})
@@ -385,7 +264,7 @@ class AuthController {
 				userExists.password
 			)
 			if (!isValidPassword) {
-				return Response.errorResponse({
+				return response.errorResponse({
 					statusCode: 401,
 					message: "Email or password mismatch"
 				})
@@ -415,29 +294,33 @@ class AuthController {
 				mobile: userExists.mobile
 			}
 
-			return Response.successResponse({token, data})
-		} catch (error: any) {
+			return response.successResponse({token, data})
+		} catch (error) {
 			next(error)
 		}
 	}
 
 	public async refreshToken(req: Request, res: Response, next: NextFunction) {
 		try {
+			const response = new ApiResponse(res)
 			let accessToken: string = req.headers.authorization as string
-			// if (!accessToken) {
-			// 	throw new BadRequestException(
-			// 		"Missing authorization header",
-			// 		"invalid_token"
-			// 	)
-			// }
+			if (!accessToken) {
+				return response.errorResponse({
+					statusCode: 401,
+					message: "Missing authorize header"
+				})
+			}
 
 			// @ts-ignore
 			accessToken = accessToken.split("Bearer").pop().trim()
 
 			const decodedToken = jwt.decode(accessToken)
-			// if (!decodedToken) {
-			// 	throw new BadRequestException("Invalid token", "invalid_token")
-			// }
+			if (!decodedToken) {
+				return response.errorResponse({
+					statusCode: 401,
+					message: "Not a valid access token"
+				})
+			}
 
 			// @ts-ignore
 			delete decodedToken.iat
@@ -458,54 +341,12 @@ class AuthController {
 				}
 			)
 
-			return res.json({
-				success: true,
+			return response.successResponse({
 				message: `Refresh token generated successfully`,
 				token
 			})
 		} catch (error) {
-			res.status(400).json({
-				status: 400,
-				message: error?.toString(),
-				code: "unexpected_error"
-			})
-			return
-		}
-	}
-
-	public async updateUser(req: Request, res: Response, next: NextFunction) {
-		try {
-		} catch (error) {
-			res.status(400).json({
-				status: 400,
-				message: error?.toString(),
-				code: "unexpected_error"
-			})
-			return
-		}
-	}
-
-	public async listUser(req: Request, res: Response, next: NextFunction) {
-		try {
-		} catch (error) {
-			res.status(400).json({
-				status: 400,
-				message: error?.toString(),
-				code: "unexpected_error"
-			})
-			return
-		}
-	}
-
-	public async deleteUser(req: Request, res: Response, next: NextFunction) {
-		try {
-		} catch (error) {
-			res.status(400).json({
-				status: 400,
-				message: error?.toString(),
-				code: "unexpected_error"
-			})
-			return
+			next(error)
 		}
 	}
 }

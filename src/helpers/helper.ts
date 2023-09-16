@@ -25,11 +25,11 @@ export async function generateOtp() {
 
 export async function sendSMS(mobile: any, message: any) {}
 
-// export async function sendOtpToEmail(
-//   email: string,
-//   otp: number,
-//   firstName: string
-// ) {
+export async function sendOtpToEmail(
+  email: string,
+  otp: number,
+  firstName: string
+) {
 //   // need to pass the email
 //   const notificationData: ActiveNotificationService | null =
 //     await getActiveEmailProvider();
@@ -49,7 +49,7 @@ export async function sendSMS(mobile: any, message: any) {}
 //   };
 
 //   sendMailByMailjet(configuration);
-// }
+}
 
 // export async function sendVerificationEmail(
 //   email: string,

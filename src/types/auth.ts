@@ -30,22 +30,6 @@ export type SignOutPayload = {
 	userId: string
 }
 
-export type UpdateUserPayload = {
-	userId: string
-	name?: string
-	email?: {
-		email: string
-		password: string
-	}
-	mobile?: string
-	dob?: string
-	address?: string
-	city?: string
-	state?: string
-	country?: string
-	postalCode?: string
-}
-
 export type SendOtpPayload = {
 	email: string
 }
@@ -57,8 +41,13 @@ export type VerifyOtpPayload = {
 
 export type ResetPasswordPayload = {
 	email: string
-	value: string
+	otp: string
 	password: string
+}
+
+export type verifyOtpPayload = {
+	email: string
+	otp: string
 }
 
 type FilterPayload = {
