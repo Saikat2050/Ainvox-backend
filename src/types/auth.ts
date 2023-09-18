@@ -1,5 +1,3 @@
-import {OrderDir, Range} from "./common"
-
 export enum Role {
 	SUPER_ADMIN = 1,
 	FREELANCER = 2,
@@ -26,17 +24,8 @@ export type RegisterPayload = {
 	postalCode?: string
 }
 
-export type SignOutPayload = {
-	userId: string
-}
-
 export type SendOtpPayload = {
 	email: string
-}
-
-export type VerifyOtpPayload = {
-	email: string
-	value: string
 }
 
 export type ResetPasswordPayload = {
@@ -50,20 +39,7 @@ export type verifyOtpPayload = {
 	otp: string
 }
 
-type FilterPayload = {
-	userId?: string
-	search?: string
-}
-
-export type ListUserPayload = {
-	filter?: FilterPayload
-	range?: Range
-	sort?: {
-		orderBy?: "userId"
-		orderDir?: OrderDir
-	}
-}
-
-export type DeleteUserPayload = {
-	userId: string
+export type SecrectCodeSchema = {
+	otp: string
+	expireIn: string
 }

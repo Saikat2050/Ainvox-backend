@@ -1,4 +1,4 @@
-export type OrderDir = "asc" | "desc" | "ASC" | "DESC"
+export type OrderDir = 1 | -1
 
 export type Range = Partial<{
 	page: number

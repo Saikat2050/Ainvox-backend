@@ -1,1 +1,256 @@
-{}
+{
+  "/v1/auth": {
+    "hash": "66b99a15a5fafe7bec2274fa2923b6833119b835",
+    "schemas": {
+      "/v1/auth/register": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "roleId": {
+            "type": "number"
+          },
+          "mobile": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "dob": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "postalCode": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "email",
+          "name",
+          "password",
+          "roleId"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "/v1/auth/send-otp": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "email"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "/v1/auth/verify-otp": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "otp": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "email",
+          "otp"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "/v1/auth/sign-in": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "roleId": {
+            "type": "number"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "email",
+          "password",
+          "roleId"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "/v1/auth/reset-password": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "otp": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "email",
+          "otp",
+          "password"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      }
+    }
+  },
+  "/v1/user": {
+    "hash": "8aa266445e9c7f2799ce625e2623044e74557258",
+    "schemas": {
+      "/v1/user/update-user": {
+        "additionalProperties": false,
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "email": {
+            "type": "object",
+            "properties": {
+              "email": {
+                "type": "string"
+              },
+              "password": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false,
+            "required": [
+              "email",
+              "password"
+            ]
+          },
+          "roleId": {
+            "type": "number"
+          },
+          "mobile": {
+            "type": "string"
+          },
+          "dob": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "postalCode": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "userId"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "/v1/user/list-user": {
+        "type": "object",
+        "properties": {
+          "filter": {
+            "type": "object",
+            "properties": {
+              "userId": {
+                "type": "string"
+              },
+              "search": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": false
+          },
+          "range": {
+            "$ref": "#/definitions/Partial<{page:number;pageSize:number;}>"
+          },
+          "sort": {
+            "type": "object",
+            "properties": {
+              "orderBy": {
+                "const": "userId",
+                "type": "string"
+              },
+              "orderDir": {
+                "enum": [
+                  -1,
+                  1
+                ],
+                "type": "number"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false,
+        "definitions": {
+          "Partial<{page:number;pageSize:number;}>": {
+            "type": "object",
+            "properties": {
+              "page": {
+                "type": "number"
+              },
+              "pageSize": {
+                "type": "number"
+              }
+            },
+            "additionalProperties": false
+          }
+        },
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      },
+      "/v1/user/delete-user": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false,
+        "required": [
+          "password",
+          "userId"
+        ],
+        "$schema": "http://json-schema.org/draft-07/schema#"
+      }
+    }
+  }
+}

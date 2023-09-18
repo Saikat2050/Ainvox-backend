@@ -17,50 +17,27 @@ export type UserTableData = {
 	isVerified: boolean
 	isActive: boolean
 	isDeleted: boolean
-} & Range & OrderDir
+} & Range &
+	OrderDir
 
 export type UserDetails = Omit<UserTableData, "password">
 
-export type UserShortDetails= {
+export type UserUpdateAPIPayload = {
 	userId: string
 } & Partial<{
 	name: string
-	email: string
+	email: {
+		email: string
+		password: string
+	}
 	roleId: number
 	mobile: string
-	password: string
 	dob: string
 	address: string
 	city: string
 	state: string
 	country: string
 	postalCode: string
-	secrectCode: string
-	lastActivatedOn: string
-	isVerified: boolean
-	isActive: boolean
-	isDeleted: boolean
-	createdAt: string
-}>
-
-export type UserCreateApiPayload = {
-	name: string
-	email: string
-	roleId: number
-	password: string
-	city: string
-	state: string
-	country: string
-	postalCode: string
-} & Partial <{
-	mobile: string
-	dob: string
-	address: string
-	secrectCode: string
-	lastActivatedOn: string
-	isVerified: boolean
-	isActive: boolean
-	isDeleted: boolean
 }>
 
 export type UserUpdatePayload = {
@@ -70,16 +47,30 @@ export type UserUpdatePayload = {
 	email: string
 	roleId: number
 	mobile: string
-	password: string
 	dob: string
 	address: string
 	city: string
 	state: string
 	country: string
 	postalCode: string
-	secrectCode: string
-	lastActivatedOn: string
 	isVerified: boolean
-	isActive: boolean
-	isDeleted: boolean
 }>
+
+export type DeleteUserPayload = {
+	userId: string
+	password: string
+}
+
+type FilterPayload = {
+	userId?: string
+	search?: string
+}
+
+export type ListUserPayload = {
+	filter?: FilterPayload
+	range?: Range
+	sort?: {
+		orderBy?: "userId"
+		orderDir?: OrderDir
+	}
+}

@@ -19,13 +19,7 @@
         "apiPath": "/v1/auth/verify-otp",
         "method": "POST",
         "source": "types/auth.ts",
-        "schema": "VerifyOtpPayload"
-      },
-      {
-        "apiPath": "/v1/auth/update-user",
-        "method": "POST",
-        "source": "types/auth.ts",
-        "schema": "UpdateUserPayload"
+        "schema": "verifyOtpPayload"
       },
       {
         "apiPath": "/v1/auth/sign-in",
@@ -34,27 +28,33 @@
         "schema": "SignInPayload"
       },
       {
-        "apiPath": "/v1/auth/sign-out",
-        "method": "POST",
-        "source": "types/auth.ts",
-        "schema": "SignOutPayload"
-      },
-      {
         "apiPath": "/v1/auth/reset-password",
         "method": "POST",
         "source": "types/auth.ts",
         "schema": "ResetPasswordPayload"
+      }
+    ]
+  },
+  {
+    "source": "types/users.ts",
+    "basePath": "/v1/user",
+    "schemas": [
+      {
+        "apiPath": "/v1/user/update-user",
+        "method": "POST",
+        "source": "types/users.ts",
+        "schema": "UserUpdateAPIPayload"
       },
       {
-        "apiPath": "/v1/auth/list-user",
+        "apiPath": "/v1/user/list-user",
         "method": "POST",
-        "source": "types/auth.ts",
+        "source": "types/users.ts",
         "schema": "ListUserPayload"
       },
       {
-        "apiPath": "/v1/auth/delete-user",
+        "apiPath": "/v1/user/delete-user",
         "method": "POST",
-        "source": "types/auth.ts",
+        "source": "types/users.ts",
         "schema": "DeleteUserPayload"
       }
     ]

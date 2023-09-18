@@ -36,7 +36,8 @@ class Validator {
 
 				if (!valid) {
 					next({
-						errorCode: `invalid_data`,
+						statusCode: 403,
+						code: `invalid_data`,
 						message: ajv.errors[0].message
 					})
 				}
@@ -63,7 +64,11 @@ class Validator {
 			}
 			let token: string = req.headers.authorization as string
 			if (!token) {
-				throw new Error("Missing authorization header")
+				next({
+					statusCode: 401,
+					code: `invalid_token`,
+					message: "Missing authorization header"
+				})
 			}
 
 			// @ts-ignore
@@ -97,8 +102,9 @@ class Validator {
 
 			next()
 		} catch (err: any) {
-			return res.status(401).json({
-				errorCode: `invalid_token`,
+			next({
+				statusCode: 401,
+				code: `invalid_token`,
 				message: err.message
 			})
 		}

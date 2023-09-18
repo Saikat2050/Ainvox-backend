@@ -44,7 +44,7 @@ class ApiMiddleware {
 		next: NextFunction
 	) {
 		next({
-			message: `No router for Requested URL ${req.url}`,
+			message: `No router for Requested URL ${req.originalUrl}`,
 			statusCode: 404,
 			errCode: `not_found`
 		})

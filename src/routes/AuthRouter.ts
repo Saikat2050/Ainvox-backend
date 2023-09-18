@@ -9,13 +9,9 @@ export class AuthRouter {
 		this.router = express.Router()
 		this.router
 			.post("/register", AuthController.register)
-			// .post("/send-otp", AuthController)
-			// .post("/verify-otp", AuthController)
-			// .post("/update-user", AuthController)
+			.post("/send-otp", AuthController.sendOtp)
+			.post("/verify-otp", AuthController.verifyOtp)
 			.post("/sign-in", AuthController.signIn)
-		// .post("/sign-out", AuthController)
-		// .post("/reset-password", AuthController)
-		// .post("/list-user", AuthController)
-		// .post("/delete-user", AuthController)
+			.post("/reset-password", AuthController.resetPassword)
 	}
 }
