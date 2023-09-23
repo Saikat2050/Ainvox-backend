@@ -5,15 +5,16 @@ import ejs from "ejs"
 import jwt from "jsonwebtoken"
 import path from "path"
 import Crypto from "crypto"
+import eventEmitter from "../lib/logging"
 
 const transporter = nodemailer.createTransport({
-	service: "gmail",
-	host: "smtp.gmail.com",
+	service: process.env.NODMAILER_SERVICE,
+	host: process.env.NODMAILER_HOST,
 	port: 587,
 	secure: false,
 	auth: {
-		user: "MAILID@gmail.com",
-		pass: "YOUR PASSWORD"
+		user: process.env.NODEMAILER_USER,
+		pass: process.env.NODMAILER_PASSWORD
 	}
 })
 
@@ -27,7 +28,8 @@ export default {
 	regexPassword,
 	listFunction,
 	encryptionByCrypto,
-	decryptBycrypto
+	decryptBycrypto,
+	sendOtpToEmail
 }
 
 export async function generateOtp() {
@@ -39,109 +41,52 @@ export async function sendSMS(mobile: any, message: any) {}
 export async function sendOtpToEmail(
 	email: string,
 	otp: number,
-	firstName: string
+	firstName: string,
+	fileName?: string
 ) {
-	//   // need to pass the email
-	//   const notificationData: ActiveNotificationService | null =
-	//     await getActiveEmailProvider();
-	//   if (!notificationData) {
-	//     throw "No active email found";
-	//   }
-	//   const configuration = {
-	//     email: [email],
-	//     from: notificationData.configuration?.from,
-	//     publicKey: notificationData.configuration?.publicKey,
-	//     privateKey: notificationData.configuration?.privateKey,
-	//     subject: "Verify your email!",
-	//     fileName: "otp_email.ejs",
-	//     firstNameR: firstName,
-	//     otp,
-	//   };
-	// try {
-	//     const emailProviderByService: ActiveNotificationService | null =
-	//       await getActiveEmailProvider();
-	//     if (!emailProviderByService) {
-	//       throw "No active notification service found";
-	//     }
-	//     if (!configuration.fileName) {
-	//       configuration.fileName = "default.ejs";
-	//     }
-	//     // node mailer config
-	//     const config: EmailTransportConfigaration = {
-	//       host: emailProviderByService.host as string,
-	//       port: parseInt(emailProviderByService.port as string),
-	//       auth: {
-	//         user: emailProviderByService.configuration?.publicKey as string,
-	//         pass: emailProviderByService.configuration?.privateKey as string,
-	//       },
-	//     };
-	//     const transport = nodemailer.createTransport(config);
-	//     const emailArr: EmailAddressData[] = [];
-	//     const ccEmailArr: string[] = [];
-	//     const bccEmailArr: string[] = [];
-	//     if (Array.isArray(configuration.email)) {
-	//       configuration.email.forEach((email) => {
-	//         emailArr.push({
-	//           Email: email,
-	//         });
-	//       });
-	//     } else if (configuration.email) {
-	//       emailArr.push({
-	//         Email: configuration.email,
-	//       });
-	//     }
-	//     if (Array.isArray(configuration?.cc)) {
-	//       configuration.cc.forEach((email) => {
-	//         ccEmailArr.push(email);
-	//       });
-	//     } else if (configuration.cc) {
-	//       ccEmailArr.push(configuration.cc);
-	//     }
-	//     if (Array.isArray(configuration.bcc)) {
-	//       configuration.bcc?.forEach((email) => {
-	//         bccEmailArr.push(email);
-	//       });
-	//     } else if (configuration.bcc) {
-	//       bccEmailArr.push(configuration.bcc);
-	//     }
-	//     console.log(`emailArr`, emailArr);
-	//     return new Promise((resolve, reject) => {
-	//       ejs.renderFile(
-	//         path.join(__dirname, `../views/email/en/${configuration.fileName}`),
-	//         configuration,
-	//         (err, result) => {
-	//           emailArr.forEach((_email) => {
-	//             console.log(`_email`, _email);
-	//             if (err) {
-	//               console.log(`err?.message`, err?.message);
-	//               throw err;
-	//             } else {
-	//               const message: EmailBodyDetails = {
-	//                 from: configuration.from as string,
-	//                 to: _email.Email,
-	//                 cc: ccEmailArr,
-	//                 bcc: bccEmailArr,
-	//                 subject: configuration.subject as string,
-	//                 html: result,
-	//                 attachments: configuration.attachments,
-	//               };
-	//               transport.sendMail(message, function (err1, info) {
-	//                 if (err1) {
-	//                   console.log(`err1?.message`, err1?.message);
-	//                   return reject(err1);
-	//                 } else {
-	//                   return resolve(info);
-	//                 }
-	//               });
-	//             }
-	//           });
-	//         }
-	//       );
-	//     });
-	//   } catch (error: any) {
-	//     console.log(`error?.message`, error?.message);
-	//     throw error;
-	//   }
+	// need to pass the email
+	const configuration: any = {
+		subject: "Verify your email!",
+		firstName,
+		otp
+	}
+
+	try {
+		if (!fileName) {
+			fileName = "default.ejs"
+		}
+
+		return new Promise((resolve, reject) => {
+			ejs.renderFile(
+				path.join(__dirname, `../../views/email/${fileName}`),
+				configuration,
+				(err, result) => {
+					if (err) {
+						eventEmitter.emit(`err?.message`, err?.message)
+						throw err
+					} else {
+						const message = {
+							from: process.env.NODEMAILER_USER as string,
+							to: email,
+							subject: configuration.subject,
+							html: result
+						}
+						transporter.sendMail(message, function (error, info) {
+							if (error) {
+								eventEmitter.emit(`logging`, error?.message)
+								return reject(error)
+							} else {
+								return resolve(info)
+							}
+						})
+					}
+				}
+			)
+		})
+	} catch (error: any) {
+		eventEmitter.emit(`logging`, error?.message)
+		throw error
+	}
 }
 
 export async function regexEmail(email: string) {

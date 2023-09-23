@@ -131,17 +131,23 @@ class AuthController {
 				secrectCode: await encryptionByCrypto(
 					JSON.stringify({
 						otp: otpRandom,
-						expireIn: moment().add(10, "minutes").format()
+						expireIn: moment()
+							.add(
+								process.env.OTP_EXPIRATION_IN_MINUTES,
+								"minutes"
+							)
+							.format()
 					})
 				)
 			})
 
 			// send otp to email
-			// await helper.sendOtpToEmail({
-			// 	email,
-			// 	otp: Number(otpRandom),
-			// 	firstName: userExists.name
-			// })
+			await helper.sendOtpToEmail(
+				email,
+				Number(otpRandom),
+				userExists.name as string,
+				process.env.OTP_FILENAME as string
+			)
 
 			return response.successResponse({
 				message: `OTP sent successfully`
@@ -282,7 +288,8 @@ class AuthController {
 				email: inputData.email,
 				roleId: inputData.roleId,
 				isDeleted: false,
-				isActive: true
+				isActive: true,
+				isVerified: true
 			})
 			if (!userExists) {
 				return response.errorResponse({

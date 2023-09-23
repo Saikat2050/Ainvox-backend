@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Email-header</title>
+<style type="text/css">
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: "Gotham SSm",Helvetica,Arial,sans-serif;
+    background: #f7f7f7;
+}
+	.header {
+    padding: 0px;
+    background: #fff;
+    border: none;
+    border-radius: 0;
+    margin-bottom: 0px;
+    box-shadow: 0 1px 6px rgba(57,73,76,.35);
+}
+.container {
+	width: 100%;
+	margin: 0 auto;
+}
+.logo {
+    text-align: center;
+    width: 100%;
+}
+.logo img {
+    width: 200px;
+    max-width: 100%;
+}
+.email_content {
+    width: 60%;
+    margin: 0 auto;
+    box-shadow: 0 1px 6px rgba(57,73,76,.35);
+    background: #fff;
+    padding: 40px;
+    margin-top: 50px;
+    border: 1px solid #5DB0C6;
+    text-align: center;
+    color: #222;
+}
+.email_content p {
+    font-size: 16px;
+    line-height: 25px;
+    color: #444;
+}
+.note {
+    color: #848484;
+}
+.footer_left {
+    float: left;
+    width: 100%;
+    text-align: center;
+}
+.social {
+    float: right;
+    width: 50%;
+    text-align: right;
+}
+</style>
+</head>
+<body>
+	<header class="header">
+		<div class="container">
+			<div class="logo">
+				<a href="#" target="_blank">
+					<img src="">
+				</a>
+			</div>
+		</div>
+	</header>
+	<div class="container">
+		<div class="email_content">
+		<h3><strong>Dear <%- firstName -%>,</strong></h3><br>
+        Thank you for choosing Ainvox. Please use this OTP to complete your verification process. This OTP is valid for 10 minutes.<br>
+        Please do not share this OTP with anyone, Not even with Ainvox.<br><br>
+        OTP : <%- otp -%>
+        <p class="note">Isn't this mail for you? Feel free to ignore this email.</p>
+		</div>
+	</div>
+	<footer class="footer">
+	    <div class="container">
+	        <div class="footer_left">
+		        <p><strong>&#9400; 2023 Ainvox</strong> &nbsp; <a href="http://localhost:4050/" target="_blank"> Drop Shiping</a></p>
+		    </div>	
+	    </div>
+	</footer>
+</body>
+</html>

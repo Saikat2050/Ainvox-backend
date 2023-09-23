@@ -9,7 +9,7 @@
     "postinstall": "husky install",
     "prepack": "pinst --disable",
     "postpack": "pinst --enable",
-    "dev": "yarn build && concurrently --kill-others \" tsc -w --preserveWatchOutput -p tsconfig.json\" \"nodemon --watch dist --delay 50 dist/app.js\"",
+    "dev": "yarn build && concurrently --kill-others \" tsc -w --preserveWatchOutput -p tsconfig.json\" \"nodemon --watch dist --delay 20 dist/app.js\"",
     "clean": "rimraf dist",
     "build": "yarn clean && tsc -p tsconfig.json",
     "serve": "node dist/app.js",

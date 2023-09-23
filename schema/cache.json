@@ -1,6 +1,6 @@
 {
   "/v1/auth": {
-    "hash": "66b99a15a5fafe7bec2274fa2923b6833119b835",
+    "hash": "e6f0abeab1539ac0d0835684745a80000ac30807",
     "schemas": {
       "/v1/auth/register": {
         "type": "object",
@@ -123,7 +123,7 @@
     }
   },
   "/v1/user": {
-    "hash": "8aa266445e9c7f2799ce625e2623044e74557258",
+    "hash": "b287c2704e8340e7d57903c047be3ba8ac340dcc",
     "schemas": {
       "/v1/user/update-user": {
         "additionalProperties": false,

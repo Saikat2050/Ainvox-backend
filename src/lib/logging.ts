@@ -21,7 +21,6 @@ eventEmitter.on("logging", (msg: any) => {
 		data,
 		(err) => {
 			if (err) {
-				console.log(err)
 				console.error(err.message)
 			}
 		}
