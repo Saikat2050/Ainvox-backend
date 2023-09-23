@@ -13,7 +13,6 @@ import morgan from "morgan"
 import * as Sentry from "@sentry/node"
 import {ProfilingIntegration} from "@sentry/profiling-node"
 import eventEmitter from "./lib/logging"
-// import * as cron from "node-cron"
 
 /* Routes */
 import routes from "./routes/MainRouter"
